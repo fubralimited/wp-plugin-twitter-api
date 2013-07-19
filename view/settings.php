@@ -67,13 +67,26 @@ if (isset($_POST['submit'])) {
         
                 <tr valign="top">
                     <th scope="row">
+                        <label for="tapi_use_cache">
+                            Use Cache
+                        </label>
+                    </th>
+                    <td>
+                        <select name="use_cache" type="number" id="tapi_use_cache">
+                            <option value="Y" <? if (get_option(TAPI_SLUG.'_use_cache') === 'Y') echo 'selected' ?>>Yes</option>
+                            <option value="N" <? if (get_option(TAPI_SLUG.'_use_cache') === 'N') echo 'selected' ?>>No</option>
+                        </select>
+                    </td>
+                </tr>
+        
+                <tr valign="top">
+                    <th scope="row">
                         <label for="tapi_expiration_time">
                             Expiration Time (minutes)
                         </label>
                     </th>
                     <td>
                         <input name="expiration_time" type="number" id="tapi_expiration_time" value="<?= get_option(TAPI_SLUG.'_expiration_time') ?>" class="regular-text">
-                        <p class="description">If "0" then it will always refresh</p>
                     </td>
                 </tr>
 

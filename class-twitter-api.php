@@ -74,7 +74,9 @@ class TwitterAPI {
 
     /**
      * Creates or returns an instance of this class.
+     * 
      * @since   1.0.0
+     * 
      * @return  object  A single instance of this class.
      */
     public function get_instance () {
@@ -86,7 +88,9 @@ class TwitterAPI {
 
     /**
      * Fired when the plugin is activated.
+     * 
      * @since  1.0.0
+     * 
      * @param  boolean  $network_wide  True if WPMU superadmin uses "Network
      *                                 Activate" action, false if WPMU is 
      *                                 disabled or plugin is activated on an 
@@ -101,7 +105,8 @@ class TwitterAPI {
         add_option(TAPI_SLUG.'_consumer_secret', '');
         add_option(TAPI_SLUG.'_oauth_access_token', '');
         add_option(TAPI_SLUG.'_oauth_access_token_secret', '');
-        add_option(TAPI_SLUG.'_expiration_time', '15');
+        add_option(TAPI_SLUG.'_use_cache', 'Y');
+        add_option(TAPI_SLUG.'_expiration_time', 15);
 
         // Database
         $sql = '
@@ -124,7 +129,9 @@ class TwitterAPI {
 
     /**
      * Fired when the plugin is deactivated.
+     * 
      * @since  1.0.0
+     * 
      * @param  boolean  $network_wide  True if WPMU superadmin uses "Network
      *                                 Deactivate" action, false if WPMU is 
      *                                 disabled or plugin is deactivated on an
@@ -140,6 +147,7 @@ class TwitterAPI {
         delete_option(TAPI_SLUG.'_oauth_access_token');
         delete_option(TAPI_SLUG.'_oauth_access_token_secret');
         delete_option(TAPI_SLUG.'_expiration_time');
+        delete_option(TAPI_SLUG.'_use_cache');
 
         // Database
         $sql     = 'drop table `'.TAPI_TABLE_CACHE.'`;';
@@ -153,6 +161,7 @@ class TwitterAPI {
     /**
      * Register the administration menu for this plugin into the WordPress
      * Dashboard menu.
+     * 
      * @since  1.0.0
      */
     public function add_plugin_admin_menu() {
@@ -184,7 +193,9 @@ class TwitterAPI {
 
     public function query ($uri, $param='') {
 
-        $twitter = null;
+        $twitter   = null;
+        $data      = null;
+        $use_cache = get_option(TAPI_SLUG.'_use_cache');
 
         // May seem a bit odd, but it allows users to not repeat the same URL
         // in their code multiple times, so the plugin adds it on for them. It
@@ -212,8 +223,10 @@ class TwitterAPI {
         // Remove the last `&` if there is one
         $query = rtrim($query, '&');
 
-        // Check if expiration time is 0 so we always query
-        $data = TwitterAPI::_check_cache($uri.$query);
+        if ( $use_cache === 'Y' ) {        
+            // Check if we got the data
+            $data = TwitterAPI::_check_cache($uri.$query);
+        }
 
         if ( !$data ) {
 
@@ -229,12 +242,15 @@ class TwitterAPI {
             // Now to query Twitter API
             $request_method = 'GET';
             $twitter = new TwitterAPIExchange($settings);
+
             $data = $twitter
                         ->setGetfield($query)
                         ->buildOauth($url, $request_method)
                         ->performRequest();
 
-            TwitterAPI::_add_cache($uri.$query, $data);
+            if ( $use_cache === 'Y' ) {
+                TwitterAPI::_add_cache($uri.$query, $data);
+            }
 
         }
 
@@ -250,9 +266,12 @@ class TwitterAPI {
 
     /**
      * Sets the data given into the cache database
+     * 
      * @since   1.0.0
+     * 
      * @param   string   $uri      Reference URI for cache
      * @param   string   $data     Results data from Twitter
+     * 
      * @return  boolean  $results  True upon query success
      */
     public function _add_cache ($uri, $data) {
@@ -285,8 +304,11 @@ class TwitterAPI {
 
     /**
      * Checks to see if there is a cache of data
+     * 
      * @since   1.0.0
+     * 
      * @param   string  $uri  URI reference for the query
+     * 
      * @return  mixed         Cached results if found and in date, otherwise false
      */
     public function _check_cache ($uri) {
@@ -319,14 +341,18 @@ class TwitterAPI {
 
     /**
      * Checks if the cached version is expired
+     * 
      * @since   1.0.0
+     * 
      * @param   string  $saved_time  Time the cached version was saved
+     * 
      * @return  boolean              True if expired false if still good to eat
      */
     public function _is_expired ($saved_time) {
 
+        $minutes = get_option(TAPI_SLUG.'_expiration_time');
+
         $saved_time = strtotime($saved_time);
-        $minutes    = get_option(TAPI_SLUG.'_expiration_time');
         $expiration = $saved_time + ($minutes*60);
 
         if (time() > $expiration) {
@@ -335,13 +361,17 @@ class TwitterAPI {
             return false;
         }
 
+
     }
 
 
     /**
      * Finds any links, @s or #s and coverts them to a link
+     * 
      * @since   1.0.0
+     * 
      * @param   string  $tweet  Raw tweet with no HTML
+     * 
      * @return  string          Tweet with symbols converted to links
      */
     public function make_links ($tweet) {
@@ -363,6 +393,7 @@ class TwitterAPI {
 
     /**
      * Take the values from the settings admin panel and save them
+     * 
      * @since   1.0.0
      */
     public function update_settings () {
@@ -373,6 +404,7 @@ class TwitterAPI {
             $consumer_secret           = trim($_POST['consumer_secret']);
             $oauth_access_token        = trim($_POST['oauth_access_token']);
             $oauth_access_token_secret = trim($_POST['oauth_access_token_secret']);
+            $use_cache                 = trim($_POST['use_cache']);
             $expiration_time           = intval($_POST['expiration_time']);
 
             if ($consumer_key == '' || $consumer_secret == '' || $oauth_access_token == '' || $oauth_access_token_secret == '') {
@@ -381,10 +413,16 @@ class TwitterAPI {
                 echo '<div class="error settings-error"><p>All keys and tokens must be filled in to query Twitter</p></div>';
             }
 
+
+            if ( $use_cache != 'Y' && $use_cache != 'N' ) {
+                $use_cache = 'Y';
+            }
+
             update_option(TAPI_SLUG.'_consumer_key', $consumer_key);
             update_option(TAPI_SLUG.'_consumer_secret', $consumer_secret);
             update_option(TAPI_SLUG.'_oauth_access_token', $oauth_access_token);
             update_option(TAPI_SLUG.'_oauth_access_token_secret', $oauth_access_token_secret);
+            update_option(TAPI_SLUG.'_use_cache', $use_cache);
             update_option(TAPI_SLUG.'_expiration_time', $expiration_time);
 
             echo '<div class="updated settings-error"><p><strong>Settings saved.</strong></p></div>';
@@ -396,6 +434,5 @@ class TwitterAPI {
         }
 
     }
-
  
 } 
