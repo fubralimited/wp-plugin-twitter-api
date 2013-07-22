@@ -79,7 +79,7 @@ class TwitterAPI {
      * 
      * @return  object  A single instance of this class.
      */
-    public function get_instance () {
+    public static function get_instance () {
 
         return null == self::$_instance ? new self : self::$_instance;
     
