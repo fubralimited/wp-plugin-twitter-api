@@ -1,8 +1,8 @@
 <?php
 /**
- * @package Twitter API
- * @author  Neil Sweeney <neil@wolfiezero.com>
- * @license GPL-2.0+
+ * @package  Twitter API
+ * @author   Neil Sweeney <neil@wolfiezero.com>
+ * @license  GPL-2.0+
  * @link    
  *
  * @wordpress-plugin
@@ -35,6 +35,9 @@ require_once plugin_dir_path(__FILE__).'class-twitter-api.php';
 register_activation_hook( __FILE__, array( 'TwitterAPI', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'TwitterAPI', 'deactivate' ) );
 
+// AJAX function access
+add_action( 'wp_ajax_twitter_api_query', array('TwitterAPI', 'ajax_query') );        // ajax for logged in users
+add_action( 'wp_ajax_nopriv_twitter_api_query', array('TwitterAPI', 'ajax_query') ); // ajax for not logged in users
 
 // Create the class instance.
 TwitterAPI::get_instance();
