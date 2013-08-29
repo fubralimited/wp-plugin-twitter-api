@@ -3,7 +3,7 @@ Contributors: WolfieZero, Fubra
 Tags: wac, helper
 Requires at least: 3.5.1
 Tested up to: 3.6
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: Copyright 2013 Fubra Limited
 
 A Twitter API library integrated into WordPress
@@ -65,6 +65,9 @@ Twitter that bit better.
 
 
 == Changelog ==
+
+= 1.1.0 =
+* Added AJAX functionality
 
 = 1.0.0 =
 * Inital release
