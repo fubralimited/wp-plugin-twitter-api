@@ -3,12 +3,12 @@
  * @package  Twitter API
  * @author   Neil Sweeney <neil@wolfiezero.com>
  * @license  GPL-2.0+
- * @link    
+ * @link
  *
  * @wordpress-plugin
  * Plugin Name: Twitter API
  * Description: Provides easy access to the Twitter API
- * Version:     1.0.0
+ * Version:     1.1.1
  * Author:      Neil Sweeney
  * Author URI:  http://wolfiezero.com/
  * License:     GPL-2.0+

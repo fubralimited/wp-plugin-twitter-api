@@ -3,7 +3,7 @@ Contributors: WolfieZero, Fubra
 Tags: wac, helper
 Requires at least: 3.5.1
 Tested up to: 3.6
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: Copyright 2013 Fubra Limited
 
 A Twitter API library integrated into WordPress
@@ -17,7 +17,7 @@ capabilities.
 
 It also provides use of Twitter's JavaScript widget library
 
-This plugin uses the [Twitter-API-PHP](http://github.com/j7mbo/twitter-api-php) 
+This plugin uses the [Twitter-API-PHP](http://github.com/j7mbo/twitter-api-php)
 wrapper.
 
 
@@ -32,7 +32,7 @@ The `$uri` is just the latter part of the API URL, so if we wanted the user
 timeline then we would pass `statuses/user_timeline.json`. You can pass the
 full URL for version 1.1 of the API, but it's not required.
 
-The `$param` part is for the querystring and is optional based on the REST API. 
+The `$param` part is for the querystring and is optional based on the REST API.
 This can be either be a string (minus the prefixed `?`) or an array of items.
 The following two are valid...
 
@@ -45,11 +45,11 @@ The following two are valid...
     // Straight up querystring minus
     $param = 'screen_name=WolfieZero&count=5';
 
-Check Twitter's full [REST API v1.1](https://dev.twitter.com/docs/api/1.1) for 
+Check Twitter's full [REST API v1.1](https://dev.twitter.com/docs/api/1.1) for
 what you can do.
 
-There is also a `make_links()` function that allows you to take a Tweet and 
-covert all the symbols into usable links. These use 
+There is also a `make_links()` function that allows you to take a Tweet and
+covert all the symbols into usable links. These use
 [Web Intents](https://dev.twitter.com/docs/intents) to make interacting with
 Twitter that bit better.
 
@@ -65,6 +65,9 @@ Twitter that bit better.
 
 
 == Changelog ==
+
+= 1.1.1 =
+* Changed all public methods static
 
 = 1.1.0 =
 * Added AJAX functionality

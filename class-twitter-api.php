@@ -15,9 +15,9 @@ class TwitterAPI {
 
     /**
      * Instance of this class
-     * 
+     *
      * @since  1.0.0
-     * 
+     *
      * @var    object
      */
     private static $_instance = null;
@@ -49,9 +49,9 @@ class TwitterAPI {
 
 
     /**
-     * Initialize the plugin by setting localization, filters, and 
+     * Initialize the plugin by setting localization, filters, and
      * administration functions.
-     * 
+     *
      * @since  1.0.0
      */
     private function __construct () {
@@ -71,7 +71,7 @@ class TwitterAPI {
      * @param   string  $uri    URI of Twitter query
      * @param   string  $param  Additional parameters3
      */
-    public function load_ajax ( $uri, $param='' ) {
+    public static function load_ajax ( $uri, $param='' ) {
 
         // Load ajax script
         wp_enqueue_script(
@@ -97,13 +97,13 @@ class TwitterAPI {
 
 
     /**
-     * AJAX specific function to 
+     * AJAX specific function to
      *
      * @since   1.1.0
      *
      * @return  object
      */
-    public function ajax_query () {
+    public static function ajax_query () {
 
         $uri   = null;
         $param = null;
@@ -145,7 +145,7 @@ class TwitterAPI {
      *
      * @return  object
      */
-    public function query ( $uri, $param='' ) {
+    public static function query ( $uri, $param='' ) {
 
         $twitter         = null;
         $data            = null;
@@ -154,7 +154,7 @@ class TwitterAPI {
 
         // May seem a bit odd, but it allows users to not repeat the same URL
         // in their code multiple times, so the plugin adds it on for them. It
-        // just presumes they passed the full URL and we just remove it and 
+        // just presumes they passed the full URL and we just remove it and
         // then add it on to keep things uniform. Also, we are only working
         // with version 1.1 of the API at the moment.
         $root     = TwitterAPI::$_root;
@@ -183,7 +183,7 @@ class TwitterAPI {
 
         if ( !$data ) {
 
-            // Grab the users API keys from WP (provided they have added them 
+            // Grab the users API keys from WP (provided they have added them
             // to the settings page)
             $settings = array(
                 'consumer_key'              => get_option(TAPI_SLUG.'_consumer_key'),
@@ -220,15 +220,15 @@ class TwitterAPI {
 
     /**
      * Sets the data given into the cache database
-     * 
+     *
      * @since   1.0.0
-     * 
+     *
      * @param   string   $uri      Reference URI for cache
      * @param   string   $data     Results data from Twitter
-     * 
+     *
      * @return  boolean  $results  True upon query success
      */
-    public function _add_cache ($uri, $data) {
+    public static function _add_cache ($uri, $data) {
 
         global $wpdb;
 
@@ -240,7 +240,7 @@ class TwitterAPI {
                 (uri,data)
             VALUES
                 (\''.$uri.'\',\''.$serialized.'\')
-                
+
             ON DUPLICATE KEY
 
             UPDATE
@@ -256,14 +256,14 @@ class TwitterAPI {
 
     /**
      * Checks to see if there is a cache of data
-     * 
+     *
      * @since   1.0.0
-     * 
+     *
      * @param   string  $uri  URI reference for the query
-     * 
+     *
      * @return  mixed         Cached results if found and in date, otherwise false
      */
-    public function _check_cache ($uri) {
+    public static function _check_cache ($uri) {
 
         global $wpdb;
 
@@ -293,14 +293,14 @@ class TwitterAPI {
 
     /**
      * Checks if the cached version is expired
-     * 
+     *
      * @since   1.0.0
-     * 
+     *
      * @param   string  $saved_time  Time the cached version was saved
-     * 
+     *
      * @return  boolean              True if expired false if still good to eat
      */
-    public function _is_expired ($saved_time) {
+    public static function _is_expired ($saved_time) {
 
         $minutes = get_option(TAPI_SLUG.'_expiration_time');
 
@@ -319,14 +319,14 @@ class TwitterAPI {
 
     /**
      * Finds any links, @s or #s and coverts them to a link
-     * 
+     *
      * @since   1.0.0
-     * 
+     *
      * @param   string  $tweet  Raw tweet with no HTML
-     * 
+     *
      * @return  string          Tweet with symbols converted to links
      */
-    public function make_links ($tweet) {
+    public static function make_links ($tweet) {
 
         // Link
         $tweet = preg_replace("#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t< ]*)#", "\\1<a href=\"\\2\" rel=\"external nofollow\" class=\"twitter-link\">\\2</a>", $tweet);
@@ -337,21 +337,21 @@ class TwitterAPI {
 
         // Hash
         $tweet = preg_replace("/#(\w+)/", "<a href=\"https://twitter.com/search?q=%23\\1\" rel=\"external nofollow\" class=\"twitter-hash\">#\\1</a>", $tweet);
-        
+
         return $tweet;
-    
+
     }
 
 
     /**
      * Take the values from the settings admin panel and save them
-     * 
+     *
      * @since   1.0.0
      */
-    public function update_settings () {
+    public static function update_settings () {
 
         if ( !empty($_POST) || wp_verify_nonce($_POST['update'],'update_twitter_api') ) {
-            
+
             $consumer_key              = trim($_POST['consumer_key']);
             $consumer_secret           = trim($_POST['consumer_secret']);
             $oauth_access_token        = trim($_POST['oauth_access_token']);
@@ -395,38 +395,38 @@ class TwitterAPI {
 
     /**
      * Register and enqueues public-facing JavaScript files.
-     * 
+     *
      * @since  1.0.0
      */
-    public function enqueue_scripts() {
+    public static function enqueue_scripts() {
 
         wp_enqueue_script('twitterplatform', '//platform.twitter.com/widgets.js', false, null, true);
-   
+
     }
 
 
     /**
      * Creates or returns an instance of this class.
-     * 
+     *
      * @since   1.0.0
-     * 
+     *
      * @return  object  A single instance of this class.
      */
     public static function get_instance () {
 
         return null == self::$_instance ? new self : self::$_instance;
-    
+
     }
 
 
     /**
      * Fired when the plugin is activated.
-     * 
+     *
      * @since  1.0.0
-     * 
+     *
      * @param  boolean  $network_wide  True if WPMU superadmin uses "Network
-     *                                 Activate" action, false if WPMU is 
-     *                                 disabled or plugin is activated on an 
+     *                                 Activate" action, false if WPMU is
+     *                                 disabled or plugin is activated on an
      *                                 individual blog.
      */
     public static function activate ($network_wide) {
@@ -462,11 +462,11 @@ class TwitterAPI {
 
     /**
      * Fired when the plugin is deactivated.
-     * 
+     *
      * @since  1.0.0
-     * 
+     *
      * @param  boolean  $network_wide  True if WPMU superadmin uses "Network
-     *                                 Deactivate" action, false if WPMU is 
+     *                                 Deactivate" action, false if WPMU is
      *                                 disabled or plugin is deactivated on an
      *                                 individual blog.
      */
@@ -494,10 +494,10 @@ class TwitterAPI {
     /**
      * Register the administration menu for this plugin into the WordPress
      * Dashboard menu.
-     * 
+     *
      * @since  1.0.0
      */
-    public function add_plugin_admin_menu() {
+    public static function add_plugin_admin_menu() {
 
         add_options_page(
             'Twitter API',
@@ -514,10 +514,10 @@ class TwitterAPI {
      * Render the settings page for this plugin.
      * @since  1.0.0
      */
-    public function display_plugin_admin_page() {
+    public static function display_plugin_admin_page() {
 
         include_once('view/settings.php');
 
     }
- 
-} 
+
+}
