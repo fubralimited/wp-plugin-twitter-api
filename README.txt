@@ -67,7 +67,7 @@ Twitter that bit better.
 == Changelog ==
 
 = 1.1.1 =
-* Changed all public methods static
+* Fixed static methods
 
 = 1.1.0 =
 * Added AJAX functionality

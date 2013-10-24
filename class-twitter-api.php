@@ -8,9 +8,9 @@
 class TwitterAPI {
 
 
-    ///////////////
-    // Variables //
-    ///////////////
+    // ------------------------------------------------------------------------
+    // Variables
+    // ------------------------------------------------------------------------
 
 
     /**
@@ -43,9 +43,10 @@ class TwitterAPI {
     private static $_root = 'https://api.twitter.com/1.1/';
 
 
-    /////////////////
-    // Main Plugin //
-    /////////////////
+
+    // ------------------------------------------------------------------------
+    // Main Plugin
+    // ------------------------------------------------------------------------
 
 
     /**
@@ -388,21 +389,10 @@ class TwitterAPI {
     }
 
 
-    /////////////////////////
-    // WP plugin functions //
-    /////////////////////////
 
-
-    /**
-     * Register and enqueues public-facing JavaScript files.
-     *
-     * @since  1.0.0
-     */
-    public static function enqueue_scripts() {
-
-        wp_enqueue_script('twitterplatform', '//platform.twitter.com/widgets.js', false, null, true);
-
-    }
+    // ------------------------------------------------------------------------
+    // WP plugin functions
+    // ------------------------------------------------------------------------
 
 
     /**
@@ -412,9 +402,21 @@ class TwitterAPI {
      *
      * @return  object  A single instance of this class.
      */
-    public static function get_instance () {
+    public static function get_instance() {
 
         return null == self::$_instance ? new self : self::$_instance;
+
+    }
+
+
+    /**
+     * Register and enqueues public-facing JavaScript files.
+     *
+     * @since  1.0.0
+     */
+    public function enqueue_scripts() {
+
+        wp_enqueue_script('twitterplatform', '//platform.twitter.com/widgets.js', false, null, true);
 
     }
 
@@ -429,17 +431,17 @@ class TwitterAPI {
      *                                 disabled or plugin is activated on an
      *                                 individual blog.
      */
-    public static function activate ($network_wide) {
+    public static function activate( $network_wide ) {
 
         global $wpdb;
 
         // WP Options
-        add_option(TAPI_SLUG.'_consumer_key', '');
-        add_option(TAPI_SLUG.'_consumer_secret', '');
-        add_option(TAPI_SLUG.'_oauth_access_token', '');
-        add_option(TAPI_SLUG.'_oauth_access_token_secret', '');
-        add_option(TAPI_SLUG.'_use_cache', 'Y');
-        add_option(TAPI_SLUG.'_expiration_time', 15);
+        add_option( TAPI_SLUG . '_consumer_key', '' );
+        add_option( TAPI_SLUG . '_consumer_secret', '' );
+        add_option( TAPI_SLUG . '_oauth_access_token', '' );
+        add_option( TAPI_SLUG . '_oauth_access_token_secret', '' );
+        add_option( TAPI_SLUG . '_use_cache', 'Y' );
+        add_option( TAPI_SLUG . '_expiration_time', 15 );
 
         // Database
         $sql = '
@@ -470,17 +472,17 @@ class TwitterAPI {
      *                                 disabled or plugin is deactivated on an
      *                                 individual blog.
      */
-    public static function deactivate ($network_wide) {
+    public static function deactivate( $network_wide ) {
 
         global $wpdb;
 
         // WP Options
-        delete_option(TAPI_SLUG.'_consumer_key');
-        delete_option(TAPI_SLUG.'_consumer_secret');
-        delete_option(TAPI_SLUG.'_oauth_access_token');
-        delete_option(TAPI_SLUG.'_oauth_access_token_secret');
-        delete_option(TAPI_SLUG.'_expiration_time');
-        delete_option(TAPI_SLUG.'_use_cache');
+        delete_option( TAPI_SLUG . '_consumer_key' );
+        delete_option( TAPI_SLUG . '_consumer_secret' );
+        delete_option( TAPI_SLUG . '_oauth_access_token' );
+        delete_option( TAPI_SLUG . '_oauth_access_token_secret' );
+        delete_option( TAPI_SLUG . '_expiration_time' );
+        delete_option( TAPI_SLUG . '_use_cache' );
 
         // Database
         $sql     = 'drop table `'.TAPI_TABLE_CACHE.'`;';
@@ -497,7 +499,7 @@ class TwitterAPI {
      *
      * @since  1.0.0
      */
-    public static function add_plugin_admin_menu($this=null) {
+    public function add_plugin_admin_menu() {
 
         add_options_page(
             'Twitter API',
@@ -514,7 +516,7 @@ class TwitterAPI {
      * Render the settings page for this plugin.
      * @since  1.0.0
      */
-    public static function display_plugin_admin_page() {
+    public function display_plugin_admin_page() {
 
         include_once('view/settings.php');
 
