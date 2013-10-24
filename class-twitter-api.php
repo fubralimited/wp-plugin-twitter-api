@@ -497,7 +497,7 @@ class TwitterAPI {
      *
      * @since  1.0.0
      */
-    public static function add_plugin_admin_menu() {
+    public static function add_plugin_admin_menu($this=null) {
 
         add_options_page(
             'Twitter API',
