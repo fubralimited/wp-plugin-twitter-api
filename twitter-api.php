@@ -12,7 +12,7 @@
  * Author URI:  http://wolfiezero.com/
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * GitHub Plugin URI: https://github.com/fubralimited/wp-plugin-twitter-api
+ * GitHub Plugin URI: fubralimited/wp-plugin-twitter-api
  * GitHub Branch:     master
  */
 
